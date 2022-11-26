@@ -1,0 +1,11 @@
+parameter (int %store);
+storage   (pair (int %buyIn) (string %owner));
+code
+  {
+    UNPAIR;     # @parameter : @storage
+    # == store ==
+    # self.data.buyIn = params # @parameter : @storage
+    UPDATE 1;   # @storage
+    NIL operation; # list operation : @storage
+    PAIR;       # pair (list operation) @storage
+  };

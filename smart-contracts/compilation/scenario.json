@@ -1,0 +1,39 @@
+[
+ {
+  "shortname": "smartTable",
+  "longname": "smartTable",
+  "scenario": [
+   {
+    "action": "newContract",
+    "accept_unknown_types": false,
+    "export": "(template_id ((\"smart-contracts/contracts/smart_table.py\" 24) static_id 0) \nstorage ((\"smart-contracts/contracts/smart_table.py\" 5) record (buyIn ((\"smart-contracts/contracts/smart_table.py\" 5) literal (intOrNat 5))) (owner ((\"smart-contracts/contracts/smart_table.py\" 5) literal (string \"me\"))))\nstorage_type (())\nentry_points ((store True None None None True None (\"smart-contracts/contracts/smart_table.py\" 16) (((\"smart-contracts/contracts/smart_table.py\" 18) set ((\"smart-contracts/contracts/smart_table.py\" 18) attr ((\"smart-contracts/contracts/smart_table.py\" 24) data) \"buyIn\") ((\"smart-contracts/contracts/smart_table.py\" 16) params)))))\nflags ()\nprivates ()\nviews ()\nentry_points_layout ()\ninitial_metadata ()\nbalance ())",
+    "id": "((\"smart-contracts/contracts/smart_table.py\" 24) static_id 0)",
+    "line_no": "(\"smart-contracts/contracts/smart_table.py\" 24)",
+    "show": true
+   },
+   {
+    "action": "message",
+    "id": "((\"smart-contracts/contracts/smart_table.py\" 24) static_id 0)",
+    "line_no": "(\"smart-contracts/contracts/smart_table.py\" 25)",
+    "message": "store",
+    "params": "((\"smart-contracts/contracts/smart_table.py\" 25) literal (intOrNat 2))"
+   }
+  ],
+  "kind": "test"
+ },
+ {
+  "shortname": "smartTableCompiled",
+  "longname": "smartTableCompiled",
+  "scenario": [
+   {
+    "action": "newContract",
+    "accept_unknown_types": false,
+    "export": "(template_id ((\"\" -1) static_id 0) \nstorage ((\"smart-contracts/contracts/smart_table.py\" 5) record (buyIn ((\"smart-contracts/contracts/smart_table.py\" 5) literal (intOrNat 5))) (owner ((\"smart-contracts/contracts/smart_table.py\" 5) literal (string \"me\"))))\nstorage_type (())\nentry_points ((store True None None None True None (\"smart-contracts/contracts/smart_table.py\" 16) (((\"smart-contracts/contracts/smart_table.py\" 18) set ((\"smart-contracts/contracts/smart_table.py\" 18) attr ((\"\" -1) data) \"buyIn\") ((\"smart-contracts/contracts/smart_table.py\" 16) params)))))\nflags ()\nprivates ()\nviews ()\nentry_points_layout ()\ninitial_metadata ()\nbalance ())",
+    "id": "((\"\" -1) static_id 0)",
+    "line_no": "(\"\" -1)",
+    "show": true
+   }
+  ],
+  "kind": "compilation"
+ }
+]

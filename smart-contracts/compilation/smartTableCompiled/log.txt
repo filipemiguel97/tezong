@@ -1,0 +1,10 @@
+Creating contract KT1TezoooozzSmartPyzzSTATiCzzzwwBFA1
+ -> (Pair 5 "me")
+ => smart-contracts/compilation/smartTableCompiled/step_000_cont_0_storage.tz 1
+ => smart-contracts/compilation/smartTableCompiled/step_000_cont_0_storage.json 1
+ => smart-contracts/compilation/smartTableCompiled/step_000_cont_0_sizes.csv 2
+ => smart-contracts/compilation/smartTableCompiled/step_000_cont_0_storage.py 1
+ => smart-contracts/compilation/smartTableCompiled/step_000_cont_0_types.py 7
+ => smart-contracts/compilation/smartTableCompiled/step_000_cont_0_contract.tz 11
+ => smart-contracts/compilation/smartTableCompiled/step_000_cont_0_contract.json 8
+ => smart-contracts/compilation/smartTableCompiled/step_000_cont_0_contract.py 13
