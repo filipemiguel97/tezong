@@ -1,0 +1,376 @@
+parameter (or (or (unit %buy_in) (mutez %challenger_won)) (or (mutez %defender_left) (or (unit %defender_won) (unit %new_defender))));
+storage   (pair (pair (mutez %buyIn) (address %game_owner)) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender))));
+code
+  {
+    UNPAIR;     # @parameter : @storage
+    IF_LEFT
+      {
+        IF_LEFT
+          {
+            DROP;       # @storage
+            # == buy_in ==
+            # sp.verify(sp.pack(sp.set_type_expr(self.data.player_challenger, sp.TAddress)) == sp.pack(sp.set_type_expr(self.data.game_owner, sp.TAddress)), 'The table already has a challenger') # @storage
+            DUP;        # @storage : @storage
+            CAR;        # pair (mutez %buyIn) (address %game_owner) : @storage
+            CDR;        # address : @storage
+            PACK;       # bytes : @storage
+            SWAP;       # @storage : bytes
+            DUP;        # @storage : @storage : bytes
+            DUG 2;      # @storage : bytes : @storage
+            GET 5;      # address : bytes : @storage
+            PACK;       # bytes : bytes : @storage
+            COMPARE;    # int : @storage
+            EQ;         # bool : @storage
+            IF
+              {}
+              {
+                PUSH string "The table already has a challenger"; # string : @storage
+                FAILWITH;   # FAILED
+              }; # @storage
+            # sp.verify(sp.pack(sp.set_type_expr(sp.amount, sp.TMutez)) == sp.pack(sp.set_type_expr(self.data.buyIn, sp.TMutez)), 'Incorrect buy in ammount') # @storage
+            DUP;        # @storage : @storage
+            CAR;        # pair (mutez %buyIn) (address %game_owner) : @storage
+            CAR;        # mutez : @storage
+            PACK;       # bytes : @storage
+            AMOUNT;     # @amount : bytes : @storage
+            PACK;       # bytes : bytes : @storage
+            COMPARE;    # int : @storage
+            EQ;         # bool : @storage
+            IF
+              {}
+              {
+                PUSH string "Incorrect buy in ammount"; # string : @storage
+                FAILWITH;   # FAILED
+              }; # @storage
+            # self.data.player_challenger = sp.sender # @storage
+            SENDER;     # @sender : @storage
+            UPDATE 5;   # @storage
+            NIL operation; # list operation : @storage
+          }
+          {
+            SWAP;       # @storage : @parameter%challenger_won
+            # == challenger_won ==
+            # sp.verify(sp.pack(sp.set_type_expr(sp.sender, sp.TAddress)) == sp.pack(sp.set_type_expr(self.data.game_owner, sp.TAddress))) # @storage : @parameter%challenger_won
+            DUP;        # @storage : @storage : @parameter%challenger_won
+            DUG 2;      # @storage : @parameter%challenger_won : @storage
+            CAR;        # pair (mutez %buyIn) (address %game_owner) : @parameter%challenger_won : @storage
+            CDR;        # address : @parameter%challenger_won : @storage
+            PACK;       # bytes : @parameter%challenger_won : @storage
+            SENDER;     # @sender : bytes : @parameter%challenger_won : @storage
+            PACK;       # bytes : bytes : @parameter%challenger_won : @storage
+            COMPARE;    # int : @parameter%challenger_won : @storage
+            EQ;         # bool : @parameter%challenger_won : @storage
+            IF
+              {}
+              {
+                PUSH string "WrongCondition: sp.pack(sp.set_type_expr(sp.sender, sp.TAddress)) == sp.pack(sp.set_type_expr(self.data.game_owner, sp.TAddress))"; # string : @parameter%challenger_won : @storage
+                FAILWITH;   # FAILED
+              }; # @parameter%challenger_won : @storage
+            # sp.send(self.data.game_owner, sp.split_tokens(sp.balance, 1, 10)) # @parameter%challenger_won : @storage
+            NIL operation; # list operation : @parameter%challenger_won : @storage
+            DUP 3;      # @storage : list operation : @parameter%challenger_won : @storage
+            CAR;        # pair (mutez %buyIn) (address %game_owner) : list operation : @parameter%challenger_won : @storage
+            CDR;        # address : list operation : @parameter%challenger_won : @storage
+            CONTRACT unit; # option (contract unit) : list operation : @parameter%challenger_won : @storage
+            IF_NONE
+              {
+                PUSH int 22; # int : list operation : @parameter%challenger_won : @storage
+                FAILWITH;   # FAILED
+              }
+              {}; # @some : list operation : @parameter%challenger_won : @storage
+            PUSH nat 10; # nat : @some : list operation : @parameter%challenger_won : @storage
+            PUSH nat 1; # nat : nat : @some : list operation : @parameter%challenger_won : @storage
+            BALANCE;    # @balance : nat : nat : @some : list operation : @parameter%challenger_won : @storage
+            MUL;        # mutez : nat : @some : list operation : @parameter%challenger_won : @storage
+            EDIV;       # option (pair mutez mutez) : @some : list operation : @parameter%challenger_won : @storage
+            IF_NONE
+              {
+                PUSH int 21; # int : @some : list operation : @parameter%challenger_won : @storage
+                FAILWITH;   # FAILED
+              }
+              {
+                # sp.split_tokens(sp.balance, 1, 10) # @some : @some : list operation : @parameter%challenger_won : @storage
+              }; # @some : @some : list operation : @parameter%challenger_won : @storage
+            CAR;        # mutez : @some : list operation : @parameter%challenger_won : @storage
+            UNIT;       # unit : mutez : @some : list operation : @parameter%challenger_won : @storage
+            TRANSFER_TOKENS; # operation : list operation : @parameter%challenger_won : @storage
+            CONS;       # list operation : @parameter%challenger_won : @storage
+            # sp.send(self.data.player_challenger, (sp.balance - sp.split_tokens(sp.balance, 1, 10)) - params) # list operation : @parameter%challenger_won : @storage
+            DUP 3;      # @storage : list operation : @parameter%challenger_won : @storage
+            GET 5;      # address : list operation : @parameter%challenger_won : @storage
+            CONTRACT unit; # option (contract unit) : list operation : @parameter%challenger_won : @storage
+            IF_NONE
+              {
+                PUSH int 23; # int : list operation : @parameter%challenger_won : @storage
+                FAILWITH;   # FAILED
+              }
+              {}; # @some : list operation : @parameter%challenger_won : @storage
+            DIG 2;      # @parameter%challenger_won : @some : list operation : @storage
+            PUSH nat 10; # nat : @parameter%challenger_won : @some : list operation : @storage
+            PUSH nat 1; # nat : nat : @parameter%challenger_won : @some : list operation : @storage
+            BALANCE;    # @balance : nat : nat : @parameter%challenger_won : @some : list operation : @storage
+            MUL;        # mutez : nat : @parameter%challenger_won : @some : list operation : @storage
+            EDIV;       # option (pair mutez mutez) : @parameter%challenger_won : @some : list operation : @storage
+            IF_NONE
+              {
+                PUSH int 21; # int : @parameter%challenger_won : @some : list operation : @storage
+                FAILWITH;   # FAILED
+              }
+              {
+                # sp.split_tokens(sp.balance, 1, 10) # @some : @parameter%challenger_won : @some : list operation : @storage
+              }; # @some : @parameter%challenger_won : @some : list operation : @storage
+            CAR;        # mutez : @parameter%challenger_won : @some : list operation : @storage
+            BALANCE;    # @balance : mutez : @parameter%challenger_won : @some : list operation : @storage
+            SUB_MUTEZ;  # option mutez : @parameter%challenger_won : @some : list operation : @storage
+            IF_NONE
+              {
+                PUSH int 23; # int : @parameter%challenger_won : @some : list operation : @storage
+                FAILWITH;   # FAILED
+              }
+              {}; # @some : @parameter%challenger_won : @some : list operation : @storage
+            SUB_MUTEZ;  # option mutez : @some : list operation : @storage
+            IF_NONE
+              {
+                PUSH int 23; # int : @some : list operation : @storage
+                FAILWITH;   # FAILED
+              }
+              {}; # @some : @some : list operation : @storage
+            UNIT;       # unit : @some : @some : list operation : @storage
+            TRANSFER_TOKENS; # operation : list operation : @storage
+            CONS;       # list operation : @storage
+            SWAP;       # @storage : list operation
+            # self.data.player_defender = self.data.player_challenger # @storage : list operation
+            DUP;        # @storage : @storage : list operation
+            GET 5;      # address : @storage : list operation
+            UPDATE 6;   # @storage : list operation
+            # self.data.player_challenger = self.data.game_owner # @storage : list operation
+            DUP;        # @storage : @storage : list operation
+            CAR;        # pair (mutez %buyIn) (address %game_owner) : @storage : list operation
+            CDR;        # address : @storage : list operation
+            UPDATE 5;   # @storage : list operation
+            # self.data.buyIn = self.data.initialBuyIn # @storage : list operation
+            DUP;        # @storage : @storage : list operation
+            DUG 2;      # @storage : list operation : @storage
+            UNPAIR;     # pair (mutez %buyIn) (address %game_owner) : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation : @storage
+            CDR;        # address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation : @storage
+            DIG 3;      # @storage : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+            GET 3;      # mutez : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+            PAIR;       # pair mutez address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+            PAIR;       # pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender))) : list operation
+            SWAP;       # list operation : pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)))
+          }; # list operation : pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)))
+      }
+      {
+        IF_LEFT
+          {
+            SWAP;       # @storage : @parameter%defender_left
+            # == defender_left ==
+            # sp.verify(sp.pack(sp.set_type_expr(sp.sender, sp.TAddress)) == sp.pack(sp.set_type_expr(self.data.game_owner, sp.TAddress))) # @storage : @parameter%defender_left
+            DUP;        # @storage : @storage : @parameter%defender_left
+            DUG 2;      # @storage : @parameter%defender_left : @storage
+            CAR;        # pair (mutez %buyIn) (address %game_owner) : @parameter%defender_left : @storage
+            CDR;        # address : @parameter%defender_left : @storage
+            PACK;       # bytes : @parameter%defender_left : @storage
+            SENDER;     # @sender : bytes : @parameter%defender_left : @storage
+            PACK;       # bytes : bytes : @parameter%defender_left : @storage
+            COMPARE;    # int : @parameter%defender_left : @storage
+            EQ;         # bool : @parameter%defender_left : @storage
+            IF
+              {}
+              {
+                PUSH string "WrongCondition: sp.pack(sp.set_type_expr(sp.sender, sp.TAddress)) == sp.pack(sp.set_type_expr(self.data.game_owner, sp.TAddress))"; # string : @parameter%defender_left : @storage
+                FAILWITH;   # FAILED
+              }; # @parameter%defender_left : @storage
+            SWAP;       # @storage : @parameter%defender_left
+            # self.data.player_defender = self.data.game_owner # @storage : @parameter%defender_left
+            DUP;        # @storage : @storage : @parameter%defender_left
+            CAR;        # pair (mutez %buyIn) (address %game_owner) : @storage : @parameter%defender_left
+            CDR;        # address : @storage : @parameter%defender_left
+            UPDATE 6;   # @storage : @parameter%defender_left
+            SWAP;       # @parameter%defender_left : @storage
+            # sp.send(self.data.game_owner, sp.balance - params) # @parameter%defender_left : @storage
+            NIL operation; # list operation : @parameter%defender_left : @storage
+            DUP 3;      # @storage : list operation : @parameter%defender_left : @storage
+            CAR;        # pair (mutez %buyIn) (address %game_owner) : list operation : @parameter%defender_left : @storage
+            CDR;        # address : list operation : @parameter%defender_left : @storage
+            CONTRACT unit; # option (contract unit) : list operation : @parameter%defender_left : @storage
+            IF_NONE
+              {
+                PUSH int 40; # int : list operation : @parameter%defender_left : @storage
+                FAILWITH;   # FAILED
+              }
+              {}; # @some : list operation : @parameter%defender_left : @storage
+            DIG 2;      # @parameter%defender_left : @some : list operation : @storage
+            BALANCE;    # @balance : @parameter%defender_left : @some : list operation : @storage
+            SUB_MUTEZ;  # option mutez : @some : list operation : @storage
+            IF_NONE
+              {
+                PUSH int 40; # int : @some : list operation : @storage
+                FAILWITH;   # FAILED
+              }
+              {}; # @some : @some : list operation : @storage
+            UNIT;       # unit : @some : @some : list operation : @storage
+            TRANSFER_TOKENS; # operation : list operation : @storage
+            CONS;       # list operation : @storage
+            SWAP;       # @storage : list operation
+            # self.data.buyIn = self.data.initialBuyIn # @storage : list operation
+            DUP;        # @storage : @storage : list operation
+            DUG 2;      # @storage : list operation : @storage
+            UNPAIR;     # pair (mutez %buyIn) (address %game_owner) : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation : @storage
+            CDR;        # address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation : @storage
+            DIG 3;      # @storage : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+            GET 3;      # mutez : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+            PAIR;       # pair mutez address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+            PAIR;       # pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender))) : list operation
+            SWAP;       # list operation : pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)))
+          }
+          {
+            IF_LEFT
+              {
+                DROP;       # @storage
+                # == defender_won ==
+                # sp.verify(sp.pack(sp.set_type_expr(sp.sender, sp.TAddress)) == sp.pack(sp.set_type_expr(self.data.game_owner, sp.TAddress))) # @storage
+                DUP;        # @storage : @storage
+                CAR;        # pair (mutez %buyIn) (address %game_owner) : @storage
+                CDR;        # address : @storage
+                PACK;       # bytes : @storage
+                SENDER;     # @sender : bytes : @storage
+                PACK;       # bytes : bytes : @storage
+                COMPARE;    # int : @storage
+                EQ;         # bool : @storage
+                IF
+                  {}
+                  {
+                    PUSH string "WrongCondition: sp.pack(sp.set_type_expr(sp.sender, sp.TAddress)) == sp.pack(sp.set_type_expr(self.data.game_owner, sp.TAddress))"; # string : @storage
+                    FAILWITH;   # FAILED
+                  }; # @storage
+                # sp.send(self.data.player_defender, sp.split_tokens(self.data.buyIn, 5, 7)) # @storage
+                DUP;        # @storage : @storage
+                GET 6;      # address : @storage
+                CONTRACT unit; # option (contract unit) : @storage
+                IF_NONE
+                  {
+                    PUSH int 31; # int : @storage
+                    FAILWITH;   # FAILED
+                  }
+                  {}; # @some : @storage
+                NIL operation; # list operation : @some : @storage
+                SWAP;       # @some : list operation : @storage
+                PUSH nat 7; # nat : @some : list operation : @storage
+                PUSH nat 5; # nat : nat : @some : list operation : @storage
+                DUP 5;      # @storage : nat : nat : @some : list operation : @storage
+                CAR;        # pair (mutez %buyIn) (address %game_owner) : nat : nat : @some : list operation : @storage
+                CAR;        # mutez : nat : nat : @some : list operation : @storage
+                MUL;        # mutez : nat : @some : list operation : @storage
+                EDIV;       # option (pair mutez mutez) : @some : list operation : @storage
+                IF_NONE
+                  {
+                    PUSH int 31; # int : @some : list operation : @storage
+                    FAILWITH;   # FAILED
+                  }
+                  {
+                    # sp.split_tokens(self.data.buyIn, 5, 7) # @some : @some : list operation : @storage
+                  }; # @some : @some : list operation : @storage
+                CAR;        # mutez : @some : list operation : @storage
+                UNIT;       # unit : mutez : @some : list operation : @storage
+                TRANSFER_TOKENS; # operation : list operation : @storage
+                CONS;       # list operation : @storage
+                SWAP;       # @storage : list operation
+                # sp.send(self.data.game_owner, sp.split_tokens(self.data.buyIn, 1, 10)) # @storage : list operation
+                DUP;        # @storage : @storage : list operation
+                DUG 2;      # @storage : list operation : @storage
+                CAR;        # pair (mutez %buyIn) (address %game_owner) : list operation : @storage
+                CDR;        # address : list operation : @storage
+                CONTRACT unit; # option (contract unit) : list operation : @storage
+                IF_NONE
+                  {
+                    PUSH int 32; # int : list operation : @storage
+                    FAILWITH;   # FAILED
+                  }
+                  {}; # @some : list operation : @storage
+                PUSH nat 10; # nat : @some : list operation : @storage
+                PUSH nat 1; # nat : nat : @some : list operation : @storage
+                DUP 5;      # @storage : nat : nat : @some : list operation : @storage
+                CAR;        # pair (mutez %buyIn) (address %game_owner) : nat : nat : @some : list operation : @storage
+                CAR;        # mutez : nat : nat : @some : list operation : @storage
+                MUL;        # mutez : nat : @some : list operation : @storage
+                EDIV;       # option (pair mutez mutez) : @some : list operation : @storage
+                IF_NONE
+                  {
+                    PUSH int 32; # int : @some : list operation : @storage
+                    FAILWITH;   # FAILED
+                  }
+                  {
+                    # sp.split_tokens(self.data.buyIn, 1, 10) # @some : @some : list operation : @storage
+                  }; # @some : @some : list operation : @storage
+                CAR;        # mutez : @some : list operation : @storage
+                UNIT;       # unit : mutez : @some : list operation : @storage
+                TRANSFER_TOKENS; # operation : list operation : @storage
+                CONS;       # list operation : @storage
+                SWAP;       # @storage : list operation
+                # self.data.player_challenger = self.data.game_owner # @storage : list operation
+                DUP;        # @storage : @storage : list operation
+                CAR;        # pair (mutez %buyIn) (address %game_owner) : @storage : list operation
+                CDR;        # address : @storage : list operation
+                UPDATE 5;   # @storage : list operation
+                # self.data.buyIn = sp.split_tokens(self.data.buyIn, 6, 5) # @storage : list operation
+                DUP;        # @storage : @storage : list operation
+                DUG 2;      # @storage : list operation : @storage
+                UNPAIR;     # pair (mutez %buyIn) (address %game_owner) : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation : @storage
+                CDR;        # address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation : @storage
+                PUSH nat 5; # nat : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation : @storage
+                PUSH nat 6; # nat : nat : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation : @storage
+                DIG 5;      # @storage : nat : nat : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+                CAR;        # pair (mutez %buyIn) (address %game_owner) : nat : nat : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+                CAR;        # mutez : nat : nat : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+                MUL;        # mutez : nat : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+                EDIV;       # option (pair mutez mutez) : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+                IF_NONE
+                  {
+                    PUSH int 34; # int : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+                    FAILWITH;   # FAILED
+                  }
+                  {
+                    # sp.split_tokens(self.data.buyIn, 6, 5) # @some : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+                  }; # @some : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+                CAR;        # mutez : address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+                PAIR;       # pair mutez address : pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)) : list operation
+                PAIR;       # pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender))) : list operation
+                SWAP;       # list operation : pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)))
+              }
+              {
+                DROP;       # @storage
+                # == new_defender ==
+                # sp.verify(sp.pack(sp.set_type_expr(self.data.player_defender, sp.TAddress)) == sp.pack(sp.set_type_expr(self.data.game_owner, sp.TAddress)), 'The table already has a defender') # @storage
+                DUP;        # @storage : @storage
+                CAR;        # pair (mutez %buyIn) (address %game_owner) : @storage
+                CDR;        # address : @storage
+                PACK;       # bytes : @storage
+                SWAP;       # @storage : bytes
+                DUP;        # @storage : @storage : bytes
+                DUG 2;      # @storage : bytes : @storage
+                GET 6;      # address : bytes : @storage
+                PACK;       # bytes : bytes : @storage
+                COMPARE;    # int : @storage
+                EQ;         # bool : @storage
+                IF
+                  {}
+                  {
+                    PUSH string "The table already has a defender"; # string : @storage
+                    FAILWITH;   # FAILED
+                  }; # @storage
+                # self.data.player_defender = sp.sender # @storage
+                SENDER;     # @sender : @storage
+                UPDATE 6;   # @storage
+                NIL operation; # list operation : @storage
+              }; # list operation : pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)))
+          }; # list operation : pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)))
+      }; # list operation : pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)))
+    NIL operation; # list operation : list operation : pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)))
+    SWAP;       # list operation : list operation : pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)))
+    ITER
+      {
+        CONS;       # list operation : pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)))
+      }; # list operation : pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender)))
+    PAIR;       # pair (list operation) (pair (pair mutez address) (pair (mutez %initialBuyIn) (pair (address %player_challenger) (address %player_defender))))
+  };

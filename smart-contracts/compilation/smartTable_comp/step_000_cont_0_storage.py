@@ -1,0 +1,1 @@
+sp.record(buyIn = sp.tez(5), game_owner = sp.address('tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk'), initialBuyIn = sp.tez(5), player_challenger = sp.address('tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk'), player_defender = sp.address('tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk'))
