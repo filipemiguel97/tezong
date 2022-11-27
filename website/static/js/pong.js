@@ -71,21 +71,34 @@ function drawArc(x, y, r, color){
 }
 
 // listening to the mouse
-canvas.addEventListener("mousemove", getMousePos);
+// canvas.addEventListener("mousemove", getMousePos);
 
-function getMousePos(evt){
-    let rect = canvas.getBoundingClientRect();
+// function getMousePos(evt){
+//     let rect = canvas.getBoundingClientRect();
     
-    user.y = evt.clientY - rect.top - user.height/2;
-}
+//     user.y = evt.clientY - rect.top - user.height/2;
+// }
 
 // when COM or USER scores, we reset the ball
-function resetBall(){
-    ball.x = canvas.width/2;
-    ball.y = canvas.height/2;
-    ball.velocityX = -ball.velocityX;
-    ball.speed = 7;
-}
+// function resetBall(){
+//     ball.x = canvas.width/2;
+//     ball.y = canvas.height/2;
+//     ball.velocityX = -ball.velocityX;
+//     ball.speed = 7;
+// }
+
+var game_status={"ArrowUp":false, "ArrowDown":false, "ArrowLeft":false, "ArrowRight":false, "player_hash": "p1"};
+
+document.addEventListener('keyup', (e) => {
+    if(game_status.hasOwnProperty(e.code))
+        game_status[e.code]=false;
+});
+
+document.addEventListener('keydown', (e) => {
+    if(game_status.hasOwnProperty(e.code))
+        game_status[e.code]=true;
+});
+
 
 // draw the net
 function drawNet(){
@@ -102,89 +115,115 @@ function drawText(text,x,y){
 }
 
 // collision detection
-function collision(b,p){
-    p.top = p.y;
-    p.bottom = p.y + p.height;
-    p.left = p.x;
-    p.right = p.x + p.width;
+// function collision(b,p){
+//     p.top = p.y;
+//     p.bottom = p.y + p.height;
+//     p.left = p.x;
+//     p.right = p.x + p.width;
     
-    b.top = b.y - b.radius;
-    b.bottom = b.y + b.radius;
-    b.left = b.x - b.radius;
-    b.right = b.x + b.radius;
+//     b.top = b.y - b.radius;
+//     b.bottom = b.y + b.radius;
+//     b.left = b.x - b.radius;
+//     b.right = b.x + b.radius;
     
-    return p.left < b.right && p.top < b.bottom && p.right > b.left && p.bottom > b.top;
-}
+//     return p.left < b.right && p.top < b.bottom && p.right > b.left && p.bottom > b.top;
+// }
 
+function get_status(data)
+{
+    var xhr = new XMLHttpRequest();
+    console.log(data);
+    xhr.open("POST", 'http://127.0.0.1:5000/', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify(data));
+    xhr.onload = () => {
+        if (xhr.readyState === xhr.DONE) {
+            if (xhr.status === 200) {
+                update(JSON.parse(xhr.responseText));
+            }
+        }
+    };
+}
 // update function, the function that does all calculations
-function update(){
-    
+function update(data){
     // change the score of players, if the ball goes to the left "ball.x<0" computer win, else if "ball.x > canvas.width" the user win
-    if( ball.x - ball.radius < 0 ){
-        com.score++;
-        // comScore.play();
-        resetBall();
-    }else if( ball.x + ball.radius > canvas.width){
-        user.score++;
-        // userScore.play();
-        resetBall();
-    }
+    // if( ball.x - ball.radius < 0 ){
+    //     com.score++;
+    //     // comScore.play();
+    //     resetBall();
+    // }else if( ball.x + ball.radius > canvas.width){
+    //     user.score++;
+    //     // userScore.play();
+    //     resetBall();
+    // }
     
     // the ball has a velocity
-    ball.x += ball.velocityX;
-    ball.y += ball.velocityY;
+    ball.x = data.ball_x * canvas.width;
+    ball.y = data.ball_y * canvas.height;
+    
+    user.x = data.p1_x * canvas.width;
+    user.y = data.p1_y * canvas.height;
+    user.score = data.score_p1;
+
+    com.x = data.p2_x * canvas.width;
+    com.y = data.p2_y * canvas.height;
+    com.score = data.score_p2;
+
+
+    // ball.x += ball.velocityX;
+    // ball.y += ball.velocityY;
     
     // computer plays for itself, and we must be able to beat it
     // simple AI
-    com.y += ((ball.y - (com.y + com.height/2)))*0.1;
+    // com.y += ((ball.y - (com.y + com.height/2)))*0.1;
     
-    // when the ball collides with bottom and top walls we inverse the y velocity.
-    if(ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height){
-        ball.velocityY = -ball.velocityY;
-        // wall.play();
-    }
+    // // when the ball collides with bottom and top walls we inverse the y velocity.
+    // if(ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height){
+    //     ball.velocityY = -ball.velocityY;
+    //     // wall.play();
+    // }
     
-    // we check if the paddle hit the user or the com paddle
-    let player = (ball.x + ball.radius < canvas.width/2) ? user : com;
+    // // we check if the paddle hit the user or the com paddle
+    // let player = (ball.x + ball.radius < canvas.width/2) ? user : com;
     
-    // if the ball hits a paddle
-    if(collision(ball,player)){
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", 'http://127.0.0.1:5000/', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify({
-            "1234": "333"
-        }));
-        xhr.onload = () => {
-            if (xhr.readyState === xhr.DONE) {
-              if (xhr.status === 200) {
-                console.log(xhr.response);
-                console.log(xhr.responseText);
-              }
-            }
-          };
-        // play sound
-        // hit.play();
-        // we check where the ball hits the paddle
-        let collidePoint = (ball.y - (player.y + player.height/2));
-        // normalize the value of collidePoint, we need to get numbers between -1 and 1.
-        // -player.height/2 < collide Point < player.height/2
-        collidePoint = collidePoint / (player.height/2);
+    // // if the ball hits a paddle
+    // if(collision(ball,player)){
+    //     var xhr = new XMLHttpRequest();
+    //     xhr.open("POST", 'http://127.0.0.1:5000/', true);
+    //     xhr.setRequestHeader('Content-Type', 'application/json');
+    //     xhr.send(JSON.stringify({
+    //         "1234": "333"
+    //     }));
+    //     xhr.onload = () => {
+    //         if (xhr.readyState === xhr.DONE) {
+    //           if (xhr.status === 200) {
+    //             console.log(xhr.response);
+    //             console.log(xhr.responseText);
+    //           }
+    //         }
+    //       };
+    //     // play sound
+    //     // hit.play();
+    //     // we check where the ball hits the paddle
+    //     let collidePoint = (ball.y - (player.y + player.height/2));
+    //     // normalize the value of collidePoint, we need to get numbers between -1 and 1.
+    //     // -player.height/2 < collide Point < player.height/2
+    //     collidePoint = collidePoint / (player.height/2);
         
-        // when the ball hits the top of a paddle we want the ball, to take a -45degees angle
-        // when the ball hits the center of the paddle we want the ball to take a 0degrees angle
-        // when the ball hits the bottom of the paddle we want the ball to take a 45degrees
-        // Math.PI/4 = 45degrees
-        let angleRad = (Math.PI/4) * collidePoint;
+    //     // when the ball hits the top of a paddle we want the ball, to take a -45degees angle
+    //     // when the ball hits the center of the paddle we want the ball to take a 0degrees angle
+    //     // when the ball hits the bottom of the paddle we want the ball to take a 45degrees
+    //     // Math.PI/4 = 45degrees
+    //     let angleRad = (Math.PI/4) * collidePoint;
         
-        // change the X and Y velocity direction
-        let direction = (ball.x + ball.radius < canvas.width/2) ? 1 : -1;
-        ball.velocityX = direction * ball.speed * Math.cos(angleRad);
-        ball.velocityY = ball.speed * Math.sin(angleRad);
+    //     // change the X and Y velocity direction
+    //     let direction = (ball.x + ball.radius < canvas.width/2) ? 1 : -1;
+    //     ball.velocityX = direction * ball.speed * Math.cos(angleRad);
+    //     ball.velocityY = ball.speed * Math.sin(angleRad);
         
-        // speed up the ball everytime a paddle hits it.
-        ball.speed += 0.1;
-    }
+    //     // speed up the ball everytime a paddle hits it.
+    //     ball.speed += 0.1;
+    // }
 }
 
 // render function, the function that does al the drawing
@@ -212,11 +251,11 @@ function render(){
     drawArc(ball.x, ball.y, ball.radius, ball.color);
 }
 function game(){
-    update();
+    get_status(game_status);
     render();
 }
 // number of frames per second
-let framePerSecond = 50;
+let framePerSecond = 1;
 
 //call the game function 50 times every 1 Sec
 let loop = setInterval(game,1000/framePerSecond);

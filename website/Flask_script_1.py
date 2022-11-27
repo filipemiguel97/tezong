@@ -18,8 +18,8 @@ def user():
     if request.method == 'POST':
         print('I got a POST')
         data = request.get_json()
-        data["1234"] = "334"
-        return jsonify(data)
+        print(data)
+        return jsonify({"ball_x": 0.5, "ball_y": 0.5, "p1_x": 0.1, "p1_y": 0.5, "p2_x": 0.8, "p2_y": 0.5, "score_p1": 0, "score_p2": 2})
 
     if request.method == 'GET':
         #data = request.form # a multidict containing POST data
