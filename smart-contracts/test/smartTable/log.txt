@@ -1,0 +1,88 @@
+Comment...
+ h1: add defender
+Creating contract KT1TezoooozzSmartPyzzSTATiCzzzwwBFA1
+ -> (Pair (Pair 5000000 "tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk") (Pair 5000000 (Pair "tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk" "tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk")))
+ => smart-contracts/test/smartTable/step_001_cont_0_storage.tz 1
+ => smart-contracts/test/smartTable/step_001_cont_0_storage.json 10
+ => smart-contracts/test/smartTable/step_001_cont_0_sizes.csv 2
+ => smart-contracts/test/smartTable/step_001_cont_0_storage.py 1
+ => smart-contracts/test/smartTable/step_001_cont_0_types.py 7
+ => smart-contracts/test/smartTable/step_001_cont_0_contract.tz 376
+ => smart-contracts/test/smartTable/step_001_cont_0_contract.json 352
+ => smart-contracts/test/smartTable/step_001_cont_0_contract.py 47
+ => smart-contracts/test/smartTable/step_002_cont_0_params.py 1
+ => smart-contracts/test/smartTable/step_002_cont_0_params.tz 1
+ => smart-contracts/test/smartTable/step_002_cont_0_params.json 1
+Executing new_defender(sp.record())...
+ -> (Pair (Pair 5000000 "tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk") (Pair 5000000 (Pair "tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk" "tz1iV1NcrNx2T28eg9pJxfaUJ2uJ3UKQV898")))
+Verifying sp.contract_data(0).player_defender == sp.resolve(sp.test_account("Joao").address)...
+ OK
+Comment...
+ h1: buy in
+ => smart-contracts/test/smartTable/step_005_cont_0_params.py 1
+ => smart-contracts/test/smartTable/step_005_cont_0_params.tz 1
+ => smart-contracts/test/smartTable/step_005_cont_0_params.json 1
+Executing buy_in(sp.record())...
+ -> (Pair (Pair 5000000 "tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk") (Pair 5000000 (Pair "tz1bL6k1e4raGdsx7nq3YP86tccY5hBsgBdL" "tz1iV1NcrNx2T28eg9pJxfaUJ2uJ3UKQV898")))
+Verifying sp.contract_data(0).player_challenger == sp.resolve(sp.test_account("Mohith").address)...
+ OK
+Comment...
+ h1: defender won
+ => smart-contracts/test/smartTable/step_008_cont_0_params.py 1
+ => smart-contracts/test/smartTable/step_008_cont_0_params.tz 1
+ => smart-contracts/test/smartTable/step_008_cont_0_params.json 1
+Executing defender_won(sp.record())...
+ -> (Pair (Pair 6000000 "tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk") (Pair 5000000 (Pair "tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk" "tz1iV1NcrNx2T28eg9pJxfaUJ2uJ3UKQV898")))
+  + Transfer
+     params: sp.unit
+     amount: sp.mutez(3571428)
+     to:     sp.contract(sp.TUnit, sp.address('tz1iV1NcrNx2T28eg9pJxfaUJ2uJ3UKQV898')).open_some()
+  + Transfer
+     params: sp.unit
+     amount: sp.mutez(500000)
+     to:     sp.contract(sp.TUnit, sp.address('tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk')).open_some()
+Verifying sp.contract_data(0).player_defender == sp.resolve(sp.test_account("Joao").address)...
+ OK
+Verifying sp.contract_data(0).player_challenger == sp.resolve(sp.test_account("Myself").address)...
+ OK
+Verifying sp.contract_data(0).buyIn == sp.tez(6)...
+ OK
+Comment...
+ h1: challenger won
+ => smart-contracts/test/smartTable/step_013_cont_0_params.py 1
+ => smart-contracts/test/smartTable/step_013_cont_0_params.tz 1
+ => smart-contracts/test/smartTable/step_013_cont_0_params.json 1
+Executing buy_in(sp.record())...
+ -> (Pair (Pair 6000000 "tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk") (Pair 5000000 (Pair "tz1bL6k1e4raGdsx7nq3YP86tccY5hBsgBdL" "tz1iV1NcrNx2T28eg9pJxfaUJ2uJ3UKQV898")))
+ => smart-contracts/test/smartTable/step_014_cont_0_params.py 1
+ => smart-contracts/test/smartTable/step_014_cont_0_params.tz 1
+ => smart-contracts/test/smartTable/step_014_cont_0_params.json 1
+Executing challenger_won(sp.mutez(5))...
+ -> (Pair (Pair 5000000 "tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk") (Pair 5000000 (Pair "tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk" "tz1bL6k1e4raGdsx7nq3YP86tccY5hBsgBdL")))
+  + Transfer
+     params: sp.unit
+     amount: sp.mutez(692857)
+     to:     sp.contract(sp.TUnit, sp.address('tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk')).open_some()
+  + Transfer
+     params: sp.unit
+     amount: sp.mutez(6235710)
+     to:     sp.contract(sp.TUnit, sp.address('tz1bL6k1e4raGdsx7nq3YP86tccY5hBsgBdL')).open_some()
+Verifying sp.contract_data(0).player_defender == sp.resolve(sp.test_account("Mohith").address)...
+ OK
+Verifying sp.contract_data(0).player_challenger == sp.resolve(sp.test_account("Myself").address)...
+ OK
+Comment...
+ h1: defender left
+ => smart-contracts/test/smartTable/step_018_cont_0_params.py 1
+ => smart-contracts/test/smartTable/step_018_cont_0_params.tz 1
+ => smart-contracts/test/smartTable/step_018_cont_0_params.json 1
+Executing defender_left(sp.mutez(5))...
+ -> (Pair (Pair 5000000 "tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk") (Pair 5000000 (Pair "tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk" "tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk")))
+  + Transfer
+     params: sp.unit
+     amount: sp.tez(0)
+     to:     sp.contract(sp.TUnit, sp.address('tz1XYLq45goZYYmNv4S6RSYFo5rGfbGUmqnk')).open_some()
+Verifying sp.contract_data(0).player_defender == sp.resolve(sp.test_account("Myself").address)...
+ OK
+Verifying sp.contract_data(0).game_owner == sp.resolve(sp.test_account("Myself").address)...
+ OK

@@ -1,8 +1,0 @@
-[
-  { "prim": "storage", "args": [ { "prim": "pair", "args": [ { "prim": "int", "annots": [ "%buyIn" ] }, { "prim": "string", "annots": [ "%owner" ] } ] } ] },
-  { "prim": "parameter", "args": [ { "prim": "int", "annots": [ "%store" ] } ] },
-  {
-    "prim": "code",
-    "args": [ [ { "prim": "UNPAIR" }, { "prim": "UPDATE", "args": [ { "int": "1" } ] }, { "prim": "NIL", "args": [ { "prim": "operation" } ] }, { "prim": "PAIR" } ] ]
-  }
-]
