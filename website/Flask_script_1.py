@@ -11,9 +11,9 @@ app = Flask(__name__)
 # Defining the home page of our site
 @app.route("/")  # this sets the route to this page
 def home():
-	return render_template('index.html')
+	return render_template('index_copy.html')
 
-@app.route('/', methods = ['GET', 'POST', 'DELETE'])
+@app.route('/game', methods = ['GET', 'POST', 'DELETE'])
 def user():
     if request.method == 'POST':
         print('I got a POST')
