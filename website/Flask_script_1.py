@@ -99,7 +99,13 @@ def user():
 
         player1.chargePowerups()
         
-        return {'ball_x':ball.rect.x/700, 'ball_y': ball.rect.y/500, 'p1_x':player1.getPaddle().rect.x/700, 'p1_y':player1.getPaddle().rect.y/500,'p2_x': player2.getPaddle().rect.x/700, 'p2_y': player2.getPaddle().rect.y/500, 'score_p1': score_p1, 'score_p2': score_p2}
+        if score_p1 > 9 or score_p2 >9:
+            isover = True
+            #print('over')
+        else:
+            isover = False
+        
+        return {'ball_x':ball.rect.x/700, 'ball_y': ball.rect.y/500, 'p1_x':player1.getPaddle().rect.x/700, 'p1_y':player1.getPaddle().rect.y/500,'p2_x': player2.getPaddle().rect.x/700, 'p2_y': player2.getPaddle().rect.y/500, 'score_p1': score_p1, 'score_p2': score_p2, 'isover': isover}
 
 
 if __name__ == '__main__':
