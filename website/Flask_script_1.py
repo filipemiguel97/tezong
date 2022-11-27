@@ -11,7 +11,12 @@ app = Flask(__name__)
 # Defining the home page of our site
 @app.route("/")  # this sets the route to this page
 def home():
-	return render_template('index_copy.html')
+	return render_template('index.html')
+
+@app.route("/game")  # this sets the route to this page
+def game():
+	return render_template('game.html')
+
 
 @app.route('/game', methods = ['GET', 'POST', 'DELETE'])
 def user():

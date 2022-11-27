@@ -87,7 +87,7 @@ function drawArc(x, y, r, color){
 //     ball.speed = 7;
 // }
 
-var game_status={"ArrowUp":false, "ArrowDown":false, "ArrowLeft":false, "ArrowRight":false, "player_hash": "p1"};
+var game_status={"ArrowUp":false, "ArrowDown":false, "ArrowLeft":false, "ArrowRight":false, "player_hash": "p1", "score_p1": 0, "score_p2": 0};
 
 document.addEventListener('keyup', (e) => {
     if(game_status.hasOwnProperty(e.code))
@@ -131,9 +131,11 @@ function drawText(text,x,y){
 
 function get_status(data)
 {
+    data.score_p1=user.score;
+    data.score_p2=com.score;
     var xhr = new XMLHttpRequest();
     console.log(data);
-    xhr.open("POST", 'http://127.0.0.1:5000/', true);
+    xhr.open("POST", 'http://127.0.0.1:5000/game', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(JSON.stringify(data));
     xhr.onload = () => {
