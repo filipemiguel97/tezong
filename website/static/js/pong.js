@@ -5,15 +5,15 @@ const canvas = document.getElementById("pong");
 const ctx = canvas.getContext('2d');
 
 // load sounds
-let hit = new Audio();
-let wall = new Audio();
-let userScore = new Audio();
-let comScore = new Audio();
+// let hit = new Audio();
+// let wall = new Audio();
+// let userScore = new Audio();
+// let comScore = new Audio();
 
-hit.src = "sounds/hit.mp3";
-wall.src = "sounds/wall.mp3";
-comScore.src = "sounds/comScore.mp3";
-userScore.src = "sounds/userScore.mp3";
+//hit.src = "sounds/hit.mp3";
+// wall.src = "sounds/wall.mp3";
+// comScore.src = "sounds/comScore.mp3";
+// userScore.src = "sounds/userScore.mp3";
 
 // Ball object
 const ball = {
@@ -122,11 +122,11 @@ function update(){
     // change the score of players, if the ball goes to the left "ball.x<0" computer win, else if "ball.x > canvas.width" the user win
     if( ball.x - ball.radius < 0 ){
         com.score++;
-        comScore.play();
+        // comScore.play();
         resetBall();
     }else if( ball.x + ball.radius > canvas.width){
         user.score++;
-        userScore.play();
+        // userScore.play();
         resetBall();
     }
     
@@ -141,7 +141,7 @@ function update(){
     // when the ball collides with bottom and top walls we inverse the y velocity.
     if(ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height){
         ball.velocityY = -ball.velocityY;
-        wall.play();
+        // wall.play();
     }
     
     // we check if the paddle hit the user or the com paddle
@@ -149,8 +149,22 @@ function update(){
     
     // if the ball hits a paddle
     if(collision(ball,player)){
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", 'http://127.0.0.1:5000/', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+            "1234": "333"
+        }));
+        xhr.onload = () => {
+            if (xhr.readyState === xhr.DONE) {
+              if (xhr.status === 200) {
+                console.log(xhr.response);
+                console.log(xhr.responseText);
+              }
+            }
+          };
         // play sound
-        hit.play();
+        // hit.play();
         // we check where the ball hits the paddle
         let collidePoint = (ball.y - (player.y + player.height/2));
         // normalize the value of collidePoint, we need to get numbers between -1 and 1.
